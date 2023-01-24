@@ -27,7 +27,7 @@ spec:
     vault:
       reviewer_service: vault-reviewer
       role: vault-role
-      address: http://35.90.153.152:8200/
+      address: http://35.90.153.152:8200
       authpath: testsupplychain-net-auth
       policy: vault-crypto-orderer-supplychain-net-ro
       secret_path: secrets
