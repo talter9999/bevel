@@ -1,0 +1,27 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta1
+kind: GitRepository
+metadata:
+  name: flux-demobevel
+  namespace: flux-demobevel
+spec:
+  interval: 1m0s
+  ref:
+    branch: local
+  secretRef:
+    name: flux-system
+  url: https://github.com/talter9999/bevel.git
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: flux-demobevel
+  namespace: flux-demobevel
+spec:
+  interval: 10m0s
+  path: ./platforms/hyperledger-fabric/releases/dev
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-demobevel
+  validation: client
