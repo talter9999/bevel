@@ -39,16 +39,16 @@ spec:
       role: vault-role
       address: http://172.17.0.10:8200
       authpath: devlopeordererorg-net-auth
-      secretmsp: secretsv2/crypto/ordererOrganizations/ordererorg-net/users/admin/msp
-      secrettls: secretsv2/crypto/ordererOrganizations/ordererorg-net/users/admin/tls
-      secretorderer: secretsv2/crypto/ordererOrganizations/ordererorg-net/orderers
-      secretpeer: secretsv2/crypto/ordererOrganizations/ordererorg-net/peers
-      secretpeerorderertls: secretsv2/crypto/ordererOrganizations/ordererorg-net/orderer/tls
-      secretambassador: secretsv2/crypto/ordererOrganizations/ordererorg-net/ambassador
-      secretcert: secretsv2/crypto/ordererOrganizations/ordererorg-net/ca?ca.ordererorg-net-cert.pem
-      secretkey: secretsv2/crypto/ordererOrganizations/ordererorg-net/ca?ordererorg-net-CA.key
-      secretcouchdb: secretsv2/credentials/ordererorg-net/couchdb/ordererorg
-      secretconfigfile: secretsv2/crypto/ordererOrganizations/ordererorg-net/msp/config
+      secretmsp: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/users/admin/msp
+      secrettls: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/users/admin/tls
+      secretorderer: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/orderers
+      secretpeer: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/peers
+      secretpeerorderertls: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/orderer/tls
+      secretambassador: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ambassador
+      secretcert: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ca.ordererorg-net-cert.pem
+      secretkey: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ordererorg-net-CA.key
+      secretcouchdb: secretsv2/data/credentials/ordererorg-net/couchdb/ordererorg
+      secretconfigfile: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/msp/config
       serviceaccountname: vault-auth
       imagesecretname: regcred
     
