@@ -34,9 +34,9 @@ spec:
       role: vault-role
       address: http://172.17.0.10:8200
       authpath: devlopeordererorg-net-auth
-      secretcert: secretsv2/crypto/ordererOrganizations/ordererorg-net/ca?ca.ordererorg-net-cert.pem
-      secretkey: secretsv2/crypto/ordererOrganizations/ordererorg-net/ca?ordererorg-net-CA.key
-      secretadminpass: secretsv2/credentials/ordererorg-net/ca/ordererorg?user
+      secretcert: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ca.ordererorg-net-cert.pem
+      secretkey: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ordererorg-net-CA.key
+      secretadminpass: secretsv2/data/credentials/ordererorg-net/ca/ordererorg?user
       serviceaccountname: vault-auth
       imagesecretname: regcred
     service:
