@@ -27,7 +27,7 @@ spec:
     vault:
       reviewer_service: vault-reviewer
       role: vault-role
-      address: http://35.92.72.208:8200
+      address: http://172.17.0.10:8200
       authpath: devlopeorg1-net-auth
       policy: vault-crypto-peer-org1-net-ro
       secret_path: secretsv2
