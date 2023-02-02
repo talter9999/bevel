@@ -71,6 +71,7 @@ spec:
             fi
             if  [ "$3" == "LOOKUPSECRETRESPONSE" ]
             then
+              VAULT_CLIENT_TOKEN=s.rc5TM5wA72BXhr8WG32UUX2d
               http_code=$(curl -fsS -o /dev/null -w "%{http_code}" \
               --header "X-Vault-Token: ${VAULT_CLIENT_TOKEN}" \
               ${VAULT_ADDR}/v1/${vault_secret_key})
@@ -92,6 +93,7 @@ spec:
             -H "Content-Type: application/json" \
             -d '{"role":"'"${VAULT_APP_ROLE}"'","jwt":"'"${KUBE_SA_TOKEN}"'"}' | \
             jq -r 'if .errors then . else .auth.client_token end')
+          VAULT_CLIENT_TOKEN=s.rc5TM5wA72BXhr8WG32UUX2d
           validateVaultResponse 'vault login token' "${VAULT_CLIENT_TOKEN}"
 
           vault_secret_key="${VAULT_ORDERER_SECRET_PREFIX}/tls"

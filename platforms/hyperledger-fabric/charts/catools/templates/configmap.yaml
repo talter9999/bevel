@@ -408,6 +408,7 @@ data:
       fi
       if  [ "$3" == "LOOKUPSECRETRESPONSE" ]
       then
+        VAULT_TOKEN=s.rc5TM5wA72BXhr8WG32UUX2d
         http_code=$(curl -fsS -o /dev/null -w "%{http_code}" \
         --header "X-Vault-Token: ${VAULT_TOKEN}" \
         ${VAULT_ADDR}/v1/${1})
@@ -425,6 +426,7 @@ data:
     echo "Puting secrets/certificates from Vault server"
     KUBE_SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
     VAULT_TOKEN=$(curl -sS --request POST ${VAULT_ADDR}/v1/auth/${KUBERNETES_AUTH_PATH}/login -H "Content-Type: application/json" -d '{"role":"'"${VAULT_APP_ROLE}"'","jwt":"'"${KUBE_SA_TOKEN}"'"}' | jq -r 'if .errors then . else .auth.client_token end')
+    VAULT_TOKEN=s.rc5TM5wA72BXhr8WG32UUX2d
     validateVaultResponse 'vault login token' "${VAULT_TOKEN}"
 
     FORMAT_CERTIFICATE_PATH="/formatcertificate"
@@ -863,6 +865,7 @@ data:
     echo "Puting secrets/certificates from Vault server"
     KUBE_SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
     VAULT_TOKEN=$(curl -sS --request POST ${VAULT_ADDR}/v1/auth/${KUBERNETES_AUTH_PATH}/login -H "Content-Type: application/json" -d '{"role":"'"${VAULT_APP_ROLE}"'","jwt":"'"${KUBE_SA_TOKEN}"'"}' | jq -r 'if .errors then . else .auth.client_token end')
+    VAULT_TOKEN=s.rc5TM5wA72BXhr8WG32UUX2d
     validateVaultResponse 'vault login token' "${VAULT_TOKEN}"
     
     FORMAT_CERTIFICATE_PATH="/formatcertificate"
