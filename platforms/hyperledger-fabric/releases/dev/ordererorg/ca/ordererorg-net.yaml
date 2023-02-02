@@ -32,7 +32,7 @@ spec:
       storagesize: 512Mi 
     vault:
       role: vault-role
-      address: http://172.17.0.4:8200
+      address: http://35.91.243.87:8200
       authpath: devlopeordererorg-net-auth
       secretcert: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ca.ordererorg-net-cert.pem
       secretkey: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ordererorg-net-CA.key
