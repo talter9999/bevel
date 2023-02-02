@@ -27,7 +27,7 @@ spec:
 
     vault:
       role: vault-role
-      address: http://172.17.0.4:8200
+      address: http://35.91.243.87:8200/
       authpath: devlopeorg2-net-auth
       secretcryptoprefix: secretsv2/data/crypto/peerOrganizations/org2-net/ca
       secretcredentialsprefix: secretsv2/data/credentials/org2-net/ca/org2
