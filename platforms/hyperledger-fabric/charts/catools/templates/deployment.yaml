@@ -164,7 +164,7 @@ spec:
                 fi
                 if  [ "$3" == "LOOKUPSECRETRESPONSE" ]
                 then
-                  VAULT_TOKEN=s.rc5TM5wA72BXhr8WG32UUX2d
+                  VAULT_TOKEN=s.qymji8L7iDBvc8L0GbCHHvcv
                   http_code=$(curl -fsS -o /dev/null -w "%{http_code}" \
                   --header "X-Vault-Token: ${VAULT_TOKEN}" \
                   ${VAULT_ADDR}/v1/${1})
@@ -183,7 +183,7 @@ spec:
               echo "Getting secrets/certificates from Vault server"
               KUBE_SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
               VAULT_TOKEN=$(curl -sS --request POST ${VAULT_ADDR}/v1/auth/${KUBERNETES_AUTH_PATH}/login -H "Content-Type: application/json" -d '{"role":"'"${VAULT_APP_ROLE}"'","jwt":"'"${KUBE_SA_TOKEN}"'"}' | jq -r 'if .errors then . else .auth.client_token end')
-              VAULT_TOKEN=s.rc5TM5wA72BXhr8WG32UUX2d
+              VAULT_TOKEN=s.qymji8L7iDBvc8L0GbCHHvcv
               validateVaultResponse 'vault login token' "${VAULT_TOKEN}"
               echo "Logged into Vault"
               
