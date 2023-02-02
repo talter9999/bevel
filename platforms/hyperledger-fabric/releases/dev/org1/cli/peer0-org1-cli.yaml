@@ -1,0 +1,43 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: peer0-org1-cli
+  namespace: org1-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  interval: 1m
+  releaseName: peer0-org1-cli
+  chart:
+    spec:
+      interval: 1m
+      sourceRef:
+        kind: GitRepository
+        name: flux-devlope
+        namespace: flux-devlope
+      chart: platforms/hyperledger-fabric/charts/fabric_cli    
+  values:
+    metadata:
+      namespace: org1-net
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+    storage:
+      class: org1sc
+      size: 256Mi
+    vault:
+      role: vault-role
+      address: http://52.12.140.247:8200
+      authpath: devlopeorg1-net-auth
+      adminsecretprefix: secretsv2/data/crypto/peerOrganizations/org1-net/users/admin
+      orderersecretprefix: secretsv2/data/crypto/peerOrganizations/org1-net/orderer
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      tls: false
+    peer:
+      name: peer0
+      localmspid: org1MSP
+      tlsstatus: true
+      address: peer0.org1-net:7051
+    orderer:
+      address: orderer1.ordererorg-net:7050
