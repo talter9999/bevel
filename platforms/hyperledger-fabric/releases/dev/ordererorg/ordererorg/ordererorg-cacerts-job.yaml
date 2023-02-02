@@ -27,7 +27,7 @@ spec:
 
     vault:
       role: vault-role
-      address: http://172.17.0.4:8200
+      address: http://35.91.243.87:8200
       authpath: devlopeordererorg-net-auth
       secretcryptoprefix: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca
       secretcredentialsprefix: secretsv2/data/credentials/ordererorg-net/ca/ordererorg
