@@ -1,0 +1,38 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ordererorg-cacerts-job
+  namespace: ordererorg-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  interval: 1m
+  releaseName: ordererorg-cacerts-job
+  chart:
+    spec:
+      interval: 1m
+      sourceRef:
+        kind: GitRepository
+        name: flux-devlope
+        namespace: flux-devlope
+      chart: platforms/hyperledger-fabric/charts/generate_cacerts
+  values:
+    metadata:
+      name: ordererorg
+      component_name: ordererorg-net
+      namespace: ordererorg-net    
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    vault:
+      role: vault-role
+      address: http://172.17.0.4:8200
+      authpath: devlopeordererorg-net-auth
+      secretcryptoprefix: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca
+      secretcredentialsprefix: secretsv2/data/credentials/ordererorg-net/ca/ordererorg
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+      
+    ca:
+      subject: /C=GB/ST=London/L=London/O=Orderer/CN=ca.ordererorg-net
