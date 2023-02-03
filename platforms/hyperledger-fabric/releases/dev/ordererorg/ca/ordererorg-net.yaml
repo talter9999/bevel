@@ -1,0 +1,50 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: ordererorg-net-ca
+  namespace: ordererorg-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  interval: 1m
+  releaseName: ordererorg-net-ca
+  chart:
+    spec:
+      interval: 1m
+      sourceRef:
+        kind: GitRepository
+        name: flux-devlope
+        namespace: flux-devlope
+      chart: platforms/hyperledger-fabric/charts/ca    
+  values:
+    metadata:
+      namespace: ordererorg-net
+      images:
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+        ca: hyperledger/fabric-ca:1.4.8
+    server:
+      name: ca
+      tlsstatus: true
+      admin: ordererorg-admin
+        
+    storage:
+      storageclassname: ordererorgsc
+      storagesize: 512Mi 
+    vault:
+      role: vault-role
+      address: http://52.12.140.247:8200
+      authpath: devlopeordererorg-net-auth
+      secretcert: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ca.ordererorg-net-cert.pem
+      secretkey: secretsv2/data/crypto/ordererOrganizations/ordererorg-net/ca?ordererorg-net-CA.key
+      secretadminpass: secretsv2/data/credentials/ordererorg-net/ca/ordererorg?user
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+    service:
+      servicetype: ClusterIP
+      ports:
+        tcp:
+          port: 7054
+    proxy:
+      provider: none
+      type: orderer
+      external_url_suffix: none
