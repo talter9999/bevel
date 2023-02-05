@@ -4,9 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"strings"
 	. "github.com/chaincode/common"
-
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
 )
@@ -61,16 +59,16 @@ func (s *SmartContract) createProduct(stub shim.ChaincodeStubInterface, args []s
 	product := Product{
 		ID:           request.ID,
 		Type:         "product",
-		Name:         request.ProductName,
-		Health:       "",
-		Metadata:     request.Metadata,
-		Location:     request.Location,
-		Sold:         false, 
-		Recalled:     false, 
-		ContainerID:  "", 
-		Custodian:    identity.Cert.Subject.String(), 
-		Timestamp:    int64(s.clock.Now().UTC().Unix()), 
-		Participants: request.Participants, 
+		Name:         request.ProductName, sampleproduct
+		Health:       "",  good
+		Metadata:     request.Metadata, misc
+		Location:     request.Location, india
+		Sold:         false, false
+		Recalled:     false, false
+		ContainerID:  "", abac
+		Custodian:    identity.Cert.Subject.String(), org1
+		Timestamp:    int64(s.clock.Now().UTC().Unix()), 1532009163
+		Participants: request.Participants, abc
 	}
 
 	product.Participants = append(product.Participants, identity.Cert.Subject.String())
@@ -328,9 +326,9 @@ func (s *SmartContract) createMarble(stub shim.ChaincodeStubInterface, args []st
 		return shim.Error("4th argument must be a non-empty string")
 	}
 	marbleName := args[0]
-	color := strings.ToLower(args[1])
-	owner := strings.ToLower(args[3])
-	size := strings.ToLower(args[2])
+	color := args[1]
+	owner := args[3]
+	size := args[2]
 
 	// ==== Check if marble already exists ====
 	marbleAsBytes, err := stub.GetState(marbleName)
@@ -461,7 +459,7 @@ func (s *SmartContract) transferMarble(stub shim.ChaincodeStubInterface, args []
 	}
 
 	marbleName := args[0]
-	newOwner := strings.ToLower(args[1])
+	newOwner := args[1]
 	fmt.Println("- start transferMarble ", marbleName, newOwner)
 
 	marbleAsBytes, err := stub.GetState(marbleName)
