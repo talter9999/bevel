@@ -61,16 +61,16 @@ func (s *SmartContract) createProduct(stub shim.ChaincodeStubInterface, args []s
 	product := Product{
 		ID:           request.ID,
 		Type:         "product",
-		Name:         request.ProductName, sampleproduct
-		Health:       "",  good
-		Metadata:     request.Metadata, misc
-		Location:     request.Location, india
-		Sold:         false, false
-		Recalled:     false, false
-		ContainerID:  "", abac
-		Custodian:    identity.Cert.Subject.String(), org1
-		Timestamp:    int64(s.clock.Now().UTC().Unix()), 1532009163
-		Participants: request.Participants, abc
+		Name:         request.ProductName,
+		Health:       "",
+		Metadata:     request.Metadata,
+		Location:     request.Location,
+		Sold:         false, 
+		Recalled:     false, 
+		ContainerID:  "", 
+		Custodian:    identity.Cert.Subject.String(), 
+		Timestamp:    int64(s.clock.Now().UTC().Unix()), 
+		Participants: request.Participants, 
 	}
 
 	product.Participants = append(product.Participants, identity.Cert.Subject.String())
