@@ -1,0 +1,53 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: anchorpeer-orgchannel-org2
+  namespace: org2-net
+  annotations:
+    fluxcd.io/automated: "false"
+spec:
+  interval: 1m
+  releaseName: anchorpeer-orgchannel-org2
+  chart:
+    spec:
+      interval: 1m
+      sourceRef:
+        kind: GitRepository
+        name: flux-devlope
+        namespace: flux-devlope
+      chart: platforms/hyperledger-fabric/charts/anchorpeer
+  values:
+    metadata:
+      namespace: org2-net
+      images:
+        fabrictools: hyperledger/fabric-tools:2.2.2
+        alpineutils: index.docker.io/hyperledgerlabs/alpine-utils:1.0
+
+    peer:
+      name: peer0
+      address: peer0.org2-net:7051
+      localmspid: org2MSP
+      loglevel: debug
+      tlsstatus: true
+
+    vault:
+      role: vault-role
+      address: http://54.185.72.226:8200
+      authpath: devlopeorg2-net-auth
+      adminsecretprefix: secretsv2/data/crypto/peerOrganizations/org2-net/users/admin
+      orderersecretprefix: secretsv2/data/crypto/peerOrganizations/org2-net/orderer
+      serviceaccountname: vault-auth
+      imagesecretname: regcred
+
+    channel:
+      name: orgchannel      
+    orderer:
+      address: orderer1.ordererorg-net:7050
+    anchorstx: |-
+      Cq4CChgKFggCGgYIpIj+ngYiCm9yZ2NoYW5uZWwSkQIKjgIKCm9yZ2NoYW5uZWwSYBJeCgtBcHBs
+      aWNhdGlvbhJPCAESSwoHb3JnMk1TUBJAGgcKA01TUBIAIgsKB1JlYWRlcnMSACILCgdXcml0ZXJz
+      EgAiCgoGQWRtaW5zEgAiDwoLRW5kb3JzZW1lbnQSABqdARKaAQoLQXBwbGljYXRpb24SigEIARKF
+      AQoHb3JnMk1TUBJ6CAEaLgoLQW5jaG9yUGVlcnMSHxIVChMKDnBlZXIwLm9yZzItbmV0EIs3GgZB
+      ZG1pbnMaBwoDTVNQEgAiDwoLRW5kb3JzZW1lbnQSACILCgdSZWFkZXJzEgAiCwoHV3JpdGVycxIA
+      IgoKBkFkbWlucxIAKgZBZG1pbnM=
+
