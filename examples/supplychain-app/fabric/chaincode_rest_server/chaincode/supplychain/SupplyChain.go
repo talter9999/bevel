@@ -69,7 +69,7 @@ func (s *SmartContract) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 	case "readMarble"
 		return s.readMarble(stub, args)
 	case "deleteMarble"
-		return s.delete(stub, args)
+		return s.deleteMarble(stub, args)
 	case "ransferMarble"
 		return s.transferMarble(stub, args)
 	default:
