@@ -4,11 +4,21 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 	. "github.com/chaincode/common"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
 )
+
+type marble struct {
+	ObjectType string `json:"docType"` //docType is used to distinguish the various types of objects in state database
+	Name       string `json:"name"`    //the fieldtags are needed to keep case from bouncing around
+	Color      string `json:"color"`
+	Size       string  `json:"size"`
+	Owner      string `json:"owner"`
+}
+
 
 // createProduct creates a new Product on the blockchain using the  with the supplied ID
 func (s *SmartContract) createProduct(stub shim.ChaincodeStubInterface, args []string) peer.Response {
@@ -51,16 +61,16 @@ func (s *SmartContract) createProduct(stub shim.ChaincodeStubInterface, args []s
 	product := Product{
 		ID:           request.ID,
 		Type:         "product",
-		Name:         request.ProductName,
-		Health:       "",
-		Metadata:     request.Metadata,
-		Location:     request.Location,
-		Sold:         false,
-		Recalled:     false,
-		ContainerID:  "",
-		Custodian:    identity.Cert.Subject.String(),
-		Timestamp:    int64(s.clock.Now().UTC().Unix()),
-		Participants: request.Participants,
+		Name:         request.ProductName, sampleproduct
+		Health:       "",  good
+		Metadata:     request.Metadata, misc
+		Location:     request.Location, india
+		Sold:         false, false
+		Recalled:     false, false
+		ContainerID:  "", abac
+		Custodian:    identity.Cert.Subject.String(), org1
+		Timestamp:    int64(s.clock.Now().UTC().Unix()), 1532009163
+		Participants: request.Participants, abc
 	}
 
 	product.Participants = append(product.Participants, identity.Cert.Subject.String())
@@ -292,4 +302,188 @@ func (s *SmartContract) updateProductCustodian(stub shim.ChaincodeStubInterface,
 	s.logger.Infof("Updated state: %s\n", trackingID)
 	return shim.Success([]byte(trackingID))
 
+}
+
+func (s *SmartContract) createMarble(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+	var err error
+
+	//   0       1       2     3
+	// "asdf", "blue", "35", "bob"
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
+	}
+
+	// ==== Input sanitation ====
+	fmt.Println("- start init marble")
+	if len(args[0]) <= 0 {
+		return shim.Error("1st argument must be a non-empty string")
+	}
+	if len(args[1]) <= 0 {
+		return shim.Error("2nd argument must be a non-empty string")
+	}
+	if len(args[2]) <= 0 {
+		return shim.Error("3rd argument must be a non-empty string")
+	}
+	if len(args[3]) <= 0 {
+		return shim.Error("4th argument must be a non-empty string")
+	}
+	marbleName := args[0]
+	color := strings.ToLower(args[1])
+	owner := strings.ToLower(args[3])
+	size := strings.ToLower(args[2])
+
+	// ==== Check if marble already exists ====
+	marbleAsBytes, err := stub.GetState(marbleName)
+	if err != nil {
+		return shim.Error("Failed to get marble: " + err.Error())
+	} else if marbleAsBytes != nil {
+		fmt.Println("This marble already exists: " + marbleName)
+		return shim.Error("This marble already exists: " + marbleName)
+	}
+
+	// ==== Create marble object and marshal to JSON ====
+	objectType := "marble"
+	marble := &marble{objectType, marbleName, color, size, owner}
+	marbleJSONasBytes, err := json.Marshal(marble)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	//Alternatively, build the marble json string manually if you don't want to use struct marshalling
+	//marbleJSONasString := `{"docType":"Marble",  "name": "` + marbleName + `", "color": "` + color + `", "size": ` + strconv.Itoa(size) + `, "owner": "` + owner + `"}`
+	//marbleJSONasBytes := []byte(str)
+
+	// === Save marble to state ===
+	err = stub.PutState(marbleName, marbleJSONasBytes)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	//  ==== Index the marble to enable color-based range queries, e.g. return all blue marbles ====
+	//  An 'index' is a normal key/value entry in state.
+	//  The key is a composite key, with the elements that you want to range query on listed first.
+	//  In our case, the composite key is based on indexName~color~name.
+	//  This will enable very efficient state range queries based on composite keys matching indexName~color~*
+	// indexName := "color~name"
+	// colorNameIndexKey, err := stub.CreateCompositeKey(indexName, []string{marble.Color, marble.Name})
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+	// //  Save index entry to state. Only the key name is needed, no need to store a duplicate copy of the marble.
+	// //  Note - passing a 'nil' value will effectively delete the key from state, therefore we pass null character as value
+	// value := []byte{0x00}
+	// stub.PutState(colorNameIndexKey, value)
+
+	// ==== Marble saved and indexed. Return success ====
+	fmt.Println("Marble added")
+	return shim.Success(nil)
+}
+
+// ===============================================
+// readMarble - read a marble from chaincode state
+// ===============================================
+func (s *SmartContract) readMarble(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+	var name, jsonResp string
+	var err error
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting name of the marble to query")
+	}
+
+	name = args[0]
+	valAsbytes, err := stub.GetState(name) //get the marble from chaincode state
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + name + "\"}"
+		return shim.Error(jsonResp)
+	} else if valAsbytes == nil {
+		jsonResp = "{\"Error\":\"Marble does not exist: " + name + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	return shim.Success(valAsbytes)
+}
+
+// ==================================================
+// delete - remove a marble key/value pair from state
+// ==================================================
+func (s *SmartContract) deleteMarble(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+	var jsonResp string
+	var marbleJSON marble
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+	marbleName := args[0]
+
+	// to maintain the color~name index, we need to read the marble first and get its color
+	valAsbytes, err := stub.GetState(marbleName) //get the marble from chaincode state
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to get state for " + marbleName + "\"}"
+		return shim.Error(jsonResp)
+	} else if valAsbytes == nil {
+		jsonResp = "{\"Error\":\"Marble does not exist: " + marbleName + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	err = json.Unmarshal([]byte(valAsbytes), &marbleJSON)
+	if err != nil {
+		jsonResp = "{\"Error\":\"Failed to decode JSON of: " + marbleName + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	err = stub.DelState(marbleName) //remove the marble from chaincode state
+	if err != nil {
+		return shim.Error("Failed to delete state:" + err.Error())
+	}
+
+	// // maintain the index
+	// indexName := "color~name"
+	// colorNameIndexKey, err := stub.CreateCompositeKey(indexName, []string{marbleJSON.Color, marbleJSON.Name})
+	// if err != nil {
+	// 	return shim.Error(err.Error())
+	// }
+
+	// //  Delete index entry to state.
+	// err = stub.DelState(colorNameIndexKey)
+	// if err != nil {
+	// 	return shim.Error("Failed to delete state:" + err.Error())
+	// }
+	return shim.Success(nil)
+}
+
+// ===========================================================
+// transfer a marble by setting a new owner name on the marble
+// ===========================================================
+func (s *SmartContract) transferMarble(stub shim.ChaincodeStubInterface, args []string) peer.Response {
+
+	//   0       1
+	// "name", "bob"
+	if len(args) < 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	marbleName := args[0]
+	newOwner := strings.ToLower(args[1])
+	fmt.Println("- start transferMarble ", marbleName, newOwner)
+
+	marbleAsBytes, err := stub.GetState(marbleName)
+	if err != nil {
+		return shim.Error("Failed to get marble:" + err.Error())
+	} else if marbleAsBytes == nil {
+		return shim.Error("Marble does not exist")
+	}
+
+	marbleToTransfer := marble{}
+	err = json.Unmarshal(marbleAsBytes, &marbleToTransfer) //unmarshal it aka JSON.parse()
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	marbleToTransfer.Owner = newOwner //change the owner
+
+	marbleJSONasBytes, _ := json.Marshal(marbleToTransfer)
+	err = stub.PutState(marbleName, marbleJSONasBytes) //rewrite the marble
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	fmt.Println("- end transferMarble (success)")
+	return shim.Success(nil)
 }
