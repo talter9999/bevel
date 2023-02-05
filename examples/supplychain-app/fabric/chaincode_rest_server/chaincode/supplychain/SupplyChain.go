@@ -66,11 +66,11 @@ func (s *SmartContract) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		return s.getHistory(stub, args)
 	case "createMarble":
 		return s.createMarble(stub, args)
-	case "readMarble"
+	case "readMarble":
 		return s.readMarble(stub, args)
-	case "deleteMarble"
+	case "deleteMarble":
 		return s.deleteMarble(stub, args)
-	case "ransferMarble"
+	case "ransferMarble":
 		return s.transferMarble(stub, args)
 	default:
 		fmt.Printf("Function for Invoke invalid or missing: %s, %s", function, args)
