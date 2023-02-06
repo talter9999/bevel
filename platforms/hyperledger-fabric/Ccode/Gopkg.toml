@@ -1,0 +1,9 @@
+
+[[constraint]]
+  name = "github.com/hyperledger/fabric"
+  branch = "master"
+
+[prune]
+  go-tests = false
+  unused-packages = true
+  
